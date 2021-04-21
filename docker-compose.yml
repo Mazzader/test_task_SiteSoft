@@ -32,8 +32,8 @@ services:
       - "8000:8000"
     volumes:
       - ./src:/src
-      - ./configs/nginx:/etc/nginx/conf.d
-      - /static:/static  <--- HERE
+      - ./configs/nginx/conf.d:/etc/nginx/conf.d
+      - /static:/static
     depends_on:
       - web
   worker:
