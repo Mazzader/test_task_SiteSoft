@@ -25,15 +25,6 @@ services:
       - "8000:8000"
     depends_on:
       - db
-  nginx:
-    restart: always
-    image: nginx:stable
-    volumes:
-      - ./configs/nginx/conf.d:/etc/nginx/conf.d:z
-    depends_on:
-      - web
-    ports:
-      - 8080:80
   worker:
     build:
       context: .
