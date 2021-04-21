@@ -26,16 +26,14 @@ services:
     depends_on:
       - db
   nginx:
-    image: nginx:latest
-    container_name: NGINXDOCKERNAME
-    ports:
-      - "8000:8000"
+    restart: always
+    image: nginx:stable
     volumes:
-      - ./src:/src
-      - ./configs/nginx/conf.d:/etc/nginx/conf.d
-      - /static:/static
+      - ./configs/nginx/conf.d:/etc/nginx/conf.d:z
     depends_on:
       - web
+    ports:
+      - 8080:80
   worker:
     build:
       context: .
