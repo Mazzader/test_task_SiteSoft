@@ -29,6 +29,7 @@ class Post(models.Model):
     link = models.CharField(max_length=1000, unique=True)
     text = models.TextField(default='test')
     author = models.ForeignKey(to=Author, on_delete=models.SET_NULL, null=True)
+    hab = models.ForeignKey(to=Hab, on_delete=models.CASCADE, null=True, blank=True)
 
     def __repr__(self):
         return self.title
