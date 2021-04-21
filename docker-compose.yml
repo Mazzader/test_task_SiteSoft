@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    hostname: rabbitmq
+    image: rabbitmq:latest
+    ports:
+      - "5672:5672"
+    restart: on-failure
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=habr_scrape
+      - POSTGRES_USER=scraper_admin
+      - POSTGRES_PASSWORD=secretpwd
+
+  web:
+    build: .
+    command: sh -c "python manage.py makemigrations && python manage.py migrate && gunicorn djangoProject1.wsgi -b 0.0.0.0:8000"
+    volumes:
+      - .:/habr_scraper
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  nginx:
+    image: nginx:latest
+    container_name: NGINXDOCKERNAME
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src:/src
+      - ./configs/nginx:/etc/nginx/conf.d
+      - /static:/static  <--- HERE
+    depends_on:
+      - web
+  worker:
+    build:
+      context: .
+    command: sh -c "celery -A djangoProject1 worker -B --concurrency=20 --loglevel=info"
+    volumes:
+      - .:/habr_scraper
+    links:
+      - rabbitmq
+    depends_on:
+      - rabbitmq
